@@ -1,19 +1,31 @@
 from openai import OpenAI
-import os
 from dotenv import load_dotenv
 
-load_dotenv()
-client = OpenAI()
+# TODO: 
+# - get commercial website data set
+#   - check out this data set: https://huggingface.co/datasets/milistu/AMAZON-Products-2023
+#   - also this data set: https://www.kaggle.com/datasets/lokeshparab/amazon-products-dataset
+# - integrate langchain conversation support
+# - need vectorization (check out ChromaDB)
+# - design UI in streamlit (must support text and image input)
 
-while True:
-    query = input("Ask ChatGPT: ")
+load_dotenv() # to load environmental variables
 
-    if not query:
-        break
+def main():
+    client = OpenAI()
 
-    response = client.responses.create(
-        model="gpt-4.1",
-        input=query
-    )
+    while True:
+        query = input("Ask ChatGPT: ")
 
-    print(response.output_text)
+        if query.lower() in ["bye", "goodbye"]:
+            break
+
+        response = client.responses.create(
+            model="gpt-4.1",
+            input=[{"role": "user", "content" : query}]
+            )
+
+        print(response.output_text)
+
+if __name__ == "__main__":
+    main()
