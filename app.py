@@ -37,7 +37,7 @@ agent = FunctionAgent(
 # to memorize previous discussions
 ctx = Context(agent)
 
-async def main():
+async def respond():
     # Run the agent
     while True:
         query = input("Say something to ChatGPT: ")
@@ -51,4 +51,4 @@ async def main():
 
 # Run the agent
 if __name__ == "__main__":
-    asyncio.run(main())
+    asyncio.run(respond())
