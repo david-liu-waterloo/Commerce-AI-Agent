@@ -1,13 +1,10 @@
-from llama_index.llms.openai import OpenAI
 from llama_index.core import VectorStoreIndex, SimpleDirectoryReader
 from llama_index.core.memory import ChatMemoryBuffer
-from llama_index.core.tools import QueryEngineTool, ToolMetadata
-from llama_index.agent.openai import OpenAIAgent
+from agno.agent import Agent
+from agno.tools import tool
+from agno.models.openai import OpenAIChat
+from agno.utils.pprint import pprint_run_response
 from dotenv import load_dotenv
-
-# TODO: 
-# - image input to AI
-# - design UI in streamlit (must support text and image input)
 
 load_dotenv() # to load environmental variables
 
@@ -17,44 +14,45 @@ index = VectorStoreIndex.from_documents(documents)
 query_engine = index.as_query_engine(verbose=False)
 
 # text-based recommendation
-tool = QueryEngineTool(
-    query_engine=query_engine,
-    metadata=ToolMetadata(
-        name="ProductQA",
-        description="Answer questions about product details or recommendations."
-    ),
-)
+@tool
+def recommend_products(query: str):
+    response = query_engine.query(query)
+    return str(response)
 
 
 # to memorize previous discussions; token limit is to reduce strain on OpenAI
 memory = ChatMemoryBuffer.from_defaults(token_limit=1500)
 
 # Create an agent workflow
-agent = OpenAIAgent.from_tools(
-    tools=[tool],
-    memory=memory,
-    llm=OpenAI(model="gpt-4o-mini"),
-    verbose=False,
-    system_prompt="""You are an AI Agent for an e-commerce website.
-    This website only sells the products in this VectorStoreIndex.
-    You can have general conversations with the user (while remembering context) and recommend products based on text prompts or images.
-    Responses should be 5 sentences or less.""",
+agent = Agent(
+    model=OpenAIChat(id="gpt-4o"),
+    add_history_to_messages=True,
+    #knowledge=None, # TODO
+    #search_knowledge=True,
+    tools=[recommend_products],
+    instructions="""You are an AI Agent for an e-commerce website.
+    You may only sell products found in the VectorStoreIndex.
+    You can have general conversations with the user and recommend products based on text prompts or images.
+    Responses should be 5 sentences or less.
+    """
 )
 
-def get_response(text):
-    response = agent.chat(text)
-    return response
+# TODO: image upload support
+def get_response(query):
+    response = agent.run(query)
+    return str(response)
+
 
 # DEBUG
-# def main():
-#     while True:
-#         query = input("[DEBUG] Say something to ChatGPT: ")
+def debug():
+    while True:
+        query = input("Ask something to our AI Agent: ")
 
-#         if query in ["bye", "goodbye"]:
-#             break
+        if query.strip().lower() in ["bye", "goodbye"]:
+            break
 
-#         response = agent.chat(query)
-#         print(response)
+        response = agent.run(query)
+        pprint_run_response(response, markdown=False)
 
-# if __name__ == "__main__":
-#     main()
+if __name__ == "__main__":
+    debug()

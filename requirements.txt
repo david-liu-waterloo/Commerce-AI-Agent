@@ -5,3 +5,4 @@ pydantic
 streamlit
 llama-index
 llama-index[openai]
+agno

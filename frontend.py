@@ -3,7 +3,8 @@ import app
 
 st.title("Mock Commercial Website AI Agent")
 
-# to memorize all existing messages
+# to display all previous messages
+# TODO: display images for AI responses
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -21,7 +22,7 @@ for message in st.session_state.messages:
 
 # chat input
 if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
-                    max_chars=1500, # I do not have infinite budget for tokens
+                    max_chars=2000, # I do not have infinite budget for tokens
                     accept_file=True,
                     file_type=[".png", ".jpg", ".jpeg"]):
     # prompt object: (text="{string}", files=[])
@@ -35,8 +36,10 @@ if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
             st.session_state.messages.append({"role": "user", "content": prompt})
 
     # AI response
-    print("[DEBUG] ", prompt)
     response = app.get_response(prompt.text)
+
+    # DEBUG
+    print("[DEBUG] \n", response)
 
     st.chat_message("assistant").markdown(response)
     st.session_state.messages.append({"role": "assistant", "content": response})
