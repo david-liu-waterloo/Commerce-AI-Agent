@@ -8,3 +8,5 @@ llama-index[openai]
 agno
 datasets
 pandas
+Pillow
+sentence-transformers
