@@ -1,5 +1,5 @@
 import streamlit as st
-from app import send_to_ai_agent
+import app
 
 st.title("Mock Commercial Website AI Agent")
 
@@ -24,11 +24,8 @@ for message in st.session_state.messages:
 if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
                     max_chars=2000, # I do not have infinite budget for tokens
                     accept_file=True,
-                    file_type=[".png", ".jpg", ".jpeg"]):
+                    file_type=[".jpg"]):
     # prompt object: (text="{string}", files=[])
-
-    # DEBUG
-    print("[DEBUG]\n", prompt)
 
     # display user query
     if prompt.text:
@@ -39,10 +36,7 @@ if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
             st.session_state.messages.append({"role": "user", "content": prompt})
 
     # AI response
-    response = send_to_ai_agent(prompt)
-
-    # DEBUG
-    print("[DEBUG]\n", response)
+    response = app.send_to_ai_agent(prompt)
 
     st.chat_message("assistant").markdown(response["text"])
     st.session_state.messages.append({"role": "assistant", "content": response["text"]})
