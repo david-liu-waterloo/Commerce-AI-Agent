@@ -19,7 +19,7 @@ images = pd.read_csv("./data/data.csv")["image"]
 image_embeddings = image_model.encode([img for img in images])
 
 # *** TEXT-BASED RECOMMENDATIONS ***
-# Create embeddings for RAG using LlamaIndex (Note: input data is created with load_data.py script; depends on global state unfortunately)
+# Create embeddings for RAG using LlamaIndex (Note: input data is created with load_data.py script)
 documents = SimpleDirectoryReader(input_dir="./data").load_data()
 index = VectorStoreIndex.from_documents(documents)
 retriever = index.as_retriever(similarity_top_k=6)
@@ -41,8 +41,8 @@ def recommend_products(query: str):
 )
 def image_search():
     query_image = PILImage.open(TEMP_IMAGE_FILE)
-    #query_image = PILImage.fromarray(BytesIO(image_bytes), mode="rgba")
     query_embedding = image_model.encode([query_image])
+
     results = util.semantic_search(query_embedding, image_embeddings, top_k=5)[0]
     return results
 
@@ -70,27 +70,20 @@ agent = Agent(
 )
 
 def send_to_ai_agent(query) -> dict:
-    # image_param_input = None
-    # if query.files:
-    #     raw_bytes = query.files[0].read()
-    #     encoded = base64.b64encode(raw_bytes).decode("utf-8")
-    #     image_param_input = {"image_base64": encoded}
-
     # get image if attached
     image_param_input = None
     if query.files:
         image_data = query.files[0].read()
         with open(TEMP_IMAGE_FILE, 'wb') as f: # save this image anywhere, such as "/tmp" or equivalent
             f.write(image_data)
-        image_param_input = [AgnoImage(filepath=TEMP_IMAGE_FILE)] #, content=image_data)]
+        image_param_input = [AgnoImage(filepath=TEMP_IMAGE_FILE)] #, content=image_data)] 
+        # NOTE: passing image_data into the AI agent is very expensive!
 
     # ask AI agent!
     try:
         response = agent.run(
             message=query.text,
             images=image_param_input
-            #images=image_param_input # for the LLM to comment on in case of error in LLM tools
-            #input=image_bytes_input
         )
     finally:
         if os.path.exists(TEMP_IMAGE_FILE):
@@ -102,17 +95,3 @@ def send_to_ai_agent(query) -> dict:
     }
 
     return useful_data
-
-
-# DEBUG
-def debug():
-    while True:
-        query = input("Ask something to our AI Agent: ")
-
-        agent.print_response(query)
-
-        if query.strip().lower() in ["bye", "goodbye"]:
-            break
-
-if __name__ == "__main__":
-    debug()

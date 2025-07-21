@@ -1,5 +1,4 @@
 openai
-chromadb
 python-dotenv
 pydantic
 streamlit
