@@ -40,7 +40,6 @@ def recommend_products(query: str):
         instructions="Find the top 5 most similar products based on input image. Always use this tool when an image input is provided, and never use this tool if no image is provided."
 )
 def image_search():
-    # TODO: fix input_image param
     query_image = PILImage.open(TEMP_IMAGE_FILE)
     #query_image = PILImage.fromarray(BytesIO(image_bytes), mode="rgba")
     query_embedding = image_model.encode([query_image])

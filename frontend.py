@@ -4,7 +4,6 @@ import app
 st.title("Mock Commercial Website AI Agent")
 
 # to display all previous messages
-# TODO: display images for AI responses
 if "messages" not in st.session_state:
     st.session_state.messages = []
 
@@ -36,7 +35,8 @@ if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
             st.session_state.messages.append({"role": "user", "content": prompt})
 
     # AI response
-    response = app.send_to_ai_agent(prompt)
+    with st.spinner():
+        response = app.send_to_ai_agent(prompt)
 
-    st.chat_message("assistant").markdown(response["text"])
-    st.session_state.messages.append({"role": "assistant", "content": response["text"]})
+        st.chat_message("assistant").markdown(response["text"])
+        st.session_state.messages.append({"role": "assistant", "content": response["text"]})
