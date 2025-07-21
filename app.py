@@ -56,7 +56,6 @@ agent = Agent(
     tools=[recommend_products, image_search],
     tool_choice="auto",
     reasoning=True,
-    show_tool_calls=True,
     stream=False,
     instructions="""You may only sell and recommend products from the VectorStoreIndex.
     You can have general conversations with the user and recommend products based on text prompts or images.
