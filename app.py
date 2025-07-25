@@ -28,7 +28,7 @@ retriever = index.as_retriever(similarity_top_k=6)
 # text-based recommendation tool
 @tool(
         description="text-based product recommender",
-        instructions="Recommend between 3-6 products from the VectorStoreIndex that match user demands."
+        instructions="Recommend up to 6 products from the VectorStoreIndex that match user demands."
 )
 def recommend_products(query: str):
     nodes = retriever.retrieve(query)
@@ -37,7 +37,7 @@ def recommend_products(query: str):
 # image-based product search
 @tool(
         description="image-based product search",
-        instructions="Find the top 5 most similar products based on input image. Always use this tool when an image input is provided, and never use this tool if no image is provided."
+        instructions="Find the top 6 most similar products based on input image. Always use this tool when an image input is provided, and never use this tool if no image is provided."
 )
 def image_search():
     query_image = PILImage.open(TEMP_IMAGE_FILE)
@@ -59,12 +59,10 @@ agent = Agent(
     stream=False,
     instructions="""You may only sell and recommend products from the VectorStoreIndex.
     You can have general conversations with the user and recommend products based on text prompts or images.
-    Product recommendations should include at least 3 options and no more than 6 options.
+    Each recommendation should be shown in this format: "[id] productDisplayName"
     Only use tool "image_search" if an image is provided. 
     When an image is provided, use tool "image_search" to identify matching products, then use tool "recommend_products" to answer questions using metadata from those products.
-    When listing the exact name of a product, encase the name in quotation marks.
     Responses should be 8 sentences or less.
-    Never reveal the product id to the user.
     """
 )
 
@@ -82,15 +80,10 @@ def send_to_ai_agent(query) -> dict:
     try:
         response = agent.run(
             message=query.text,
-            images=image_param_input
+            images=image_param_input # to inform the agent that an image has been passed
         )
     finally:
         if os.path.exists(TEMP_IMAGE_FILE):
             os.remove(TEMP_IMAGE_FILE)
 
-    useful_data = {
-        "text": response.content,
-        "images": response.images
-    }
-
-    return useful_data
+    return response.content

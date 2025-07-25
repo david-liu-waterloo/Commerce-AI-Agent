@@ -30,13 +30,15 @@ if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
     if prompt.text:
         with st.chat_message("user"):
             st.markdown(prompt.text)
-            if prompt["files"]:
-                st.image(prompt["files"][0])
-            st.session_state.messages.append({"role": "user", "content": prompt})
+    if prompt["files"]:
+        st.image(prompt["files"][0])
+        
+    if prompt.text or prompt.files:
+        st.session_state.messages.append({"role": "user", "content": prompt})
 
     # AI response
     with st.spinner():
         response = app.send_to_ai_agent(prompt)
 
-        st.chat_message("assistant").markdown(response["text"])
-        st.session_state.messages.append({"role": "assistant", "content": response["text"]})
+        st.chat_message("assistant").markdown(response)
+        st.session_state.messages.append({"role": "assistant", "content": response})
