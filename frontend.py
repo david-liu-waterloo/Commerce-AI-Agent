@@ -23,7 +23,7 @@ for message in st.session_state.messages:
 if prompt := st.chat_input(placeholder="Say something to our AI Agent...",
                     max_chars=2000, # I do not have infinite budget for tokens
                     accept_file=True,
-                    file_type=[".jpg"]):
+                    file_type=["jpg"]):
     # prompt object: (text="{string}", files=[])
 
     # display user query

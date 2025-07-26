@@ -43,7 +43,7 @@ def image_search():
     query_image = PILImage.open(TEMP_IMAGE_FILE)
     query_embedding = image_model.encode([query_image])
 
-    results = util.semantic_search(query_embedding, image_embeddings, top_k=5)[0]
+    results = util.semantic_search(query_embedding, image_embeddings, top_k=6)[0]
     return results
 
 # *** AGENT WORKFLOW ***
@@ -73,8 +73,8 @@ def send_to_ai_agent(query) -> dict:
         image_data = query.files[0].read()
         with open(TEMP_IMAGE_FILE, 'wb') as f: # save this image anywhere, such as "/tmp" or equivalent
             f.write(image_data)
-        image_param_input = [AgnoImage(filepath=TEMP_IMAGE_FILE)] #, content=image_data)] 
-        # NOTE: passing image_data into the AI agent is very expensive!
+        image_param_input = [AgnoImage(filepath=TEMP_IMAGE_FILE, format="jpg")] #, content=image_data)] 
+        # NOTE: content=image_data is disabled since passing image_data into the AI agent is very expensive!
 
     # ask AI agent!
     try:
