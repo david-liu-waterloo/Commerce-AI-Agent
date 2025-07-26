@@ -11,12 +11,12 @@ This repo contains an AI agent for an e-commerce site, based on OpenAI's gpt-4o 
 1. Download this Repo: use git clone in your chosen directory.
 2. Set up your OpenAI API Key: obtain an API key by signing up to OpenAI, then put the key inside .env file (OPENAI_API_KEY=sk-proj...).
 3. Ensure you have Python 3.8 or Higher: ensure Python is installed, and that the version is high enough.
-4. Set up Virtual Environment: create and start a virtual environment, then install required packages with '''pip install -r requirements.txt'''
-5. Generate Dataset: create mock dataset (may take a while): '''python load_data.py'''
-6. Deploy with Streamlit: start up the app: '''streamlit run frontend.py'''
+4. Set up Virtual Environment: create and start a virtual environment, then install required packages with: `pip install -r requirements.txt`
+5. Generate Dataset: create mock dataset (may take a while): `python load_data.py`
+6. Deploy with Streamlit: start up the app: `streamlit run frontend.py`
 7. Use App: Enter text queries in the chat input field and click on the paperclip to attach a .jpg image.
 
-## Contents
+## Overview of Files
 - app.py: contains the backend logic, including initialization of the AI agent, RAG index, and image embeddings.
 - frontend.py: contains all frontend logic for the User Interface, mainly streamlit functions.
 - load_data.py: helper script to create a local csv dataset
